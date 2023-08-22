@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 15s
+
+  external_labels:
+    monitor: 'codelab-monitor'
+  query_log_file: query_log_file.log
+
+# 매트릭을 수집할 엔드포인드로 여기선 Prometheus 서버 자신을 가리킨다.
+scrape_configs:
+  # 이 설정에서 수집한 타임시리즈에 `job=<job_name>`으로 잡의 이름을 설정한다.
+  # metrics_path의 기본 경로는 '/metrics'이고 scheme의 기본값은 `http`다
+  - job_name: 'monitoring-item' # job_name 은 모든 scrap 내에서 고유해야함
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    metrics_path: '/actuator/prometheus'
+    honor_labels: false
+    honor_timestamps: false
+    scheme: 'http'
+    # 실제 scrap 하는 타겟에 관한 설정
+    static_configs:
+      - targets: ['host.docker.internal:8880']
+        labels: # 옵션 - scrap 해서 가져올 metrics 들 전부에게 붙여줄 라벨
+          service : 'metric-server'
+  - job_name: 'prometheus'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    honor_labels: false
+    honor_timestamps: false
+    scheme: 'http'
+    static_configs:
+      - targets: ['prometheus:9090']
+        labels:
+          service : 'prometheus'

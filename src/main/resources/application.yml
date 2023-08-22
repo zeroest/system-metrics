@@ -1,2 +1,11 @@
 
 root-path: /
+
+server:
+  port: 8880
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
